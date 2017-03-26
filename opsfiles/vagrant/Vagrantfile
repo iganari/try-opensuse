@@ -1,0 +1,32 @@
+Vagrant.configure(2) do |config|
+  # config.vbguest.auto_update = false
+
+  if Vagrant.has_plugin?("vagrant-cachier")
+    config.cache.scope = :box
+  end
+
+  config.vm.define :svr do |server|
+    ### determined specific IP.
+    server.vm.network "private_network", ip: "192.168.33.71"
+    ### hostname of server
+    server.vm.hostname = 'opensuse'
+    ### box setting
+    server.vm.box = "opensuse/openSUSE-42.1-x86_64"
+    ### vm setting
+    server.vm.provider "virtualbox" do |vb|
+      ### name of virtualbox
+      vb.name = "opensuse-dev"
+      ### spec define
+      vb.customize ['modifyvm', :id,"--memory", 1024]
+      vb.customize ['modifyvm', :id,"--natdnshostresolver1", "on"]
+      vb.customize ['modifyvm', :id,"--natdnsproxy1", "on"]
+    end
+    ### settitng of synced_folder
+    server.vm.synced_folder "../../", "/develop/try-opensuse", \
+      :create => true, \
+      :owner  => 'vagrant', \
+      :group  => 'vagrant', \
+      :mount_options => ['dmode=755,fmode=755']
+    # server.vm.provision :shell, inline: "/bin/bash /develop/try-opensuse/opsfiles/vagrant/provision.sh rep01"
+  end
+end
