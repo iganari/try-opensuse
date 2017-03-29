@@ -1,0 +1,14 @@
+---
+#
+# webservers.yaml
+#
+
+- hosts: vagrant
+  # vars:
+  #   - node: opensuse
+  roles:
+    - common
+    # - repcached
+    # - httpd
+    # - php56
+    # - vagrant

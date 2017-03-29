@@ -1,0 +1,81 @@
+---
+#
+# roles/common/tasks/main.yml
+#
+# 
+# - name: yum update
+#   yum: name='*' state=latest 
+# 
+# - name: install epel
+#   yum: name=epel-release 
+# 
+# - name: install remi repository
+#   shell: rpm -Uvh http://rpms.famillecollet.com/enterprise/remi-release-6.rpm
+
+- name: stop unnecessary service
+  service: name="{{ item }}" state=stopped enabled=no
+  with_items:
+  - NetworkManager
+  - iptables
+  - ip6tables
+  ignore_errors: true
+
+
+- name: install packages from base
+  zypper: name="{{ item }}" state=latest
+  with_items:
+  - vim
+  - wget
+  - openssl
+  - openssl-devel
+  - tree
+  - telnet
+  - nkf
+  - mlocate
+  - expect
+  - ntp
+  - dstat
+  - htop
+  - iftop
+
+- name: change localtime to JST
+  file: >
+    src=/usr/share/zoneinfo/Asia/Tokyo
+    dest=/etc/localtime
+    force=yes
+    state=link
+
+# - name: setting japanese
+#   shell: echo 'LANG="en_US.UTF-8"' > /etc/default/locale
+# 
+# - name: disagree dpkg-reconfigure
+#   shell: dpkg-reconfigure -f noninteractive tzdata
+# 
+# - name: force color prompt
+#   lineinfile: >
+#     dest='/root/.bashrc'
+#     state=present
+#     backrefs=yes
+#     regexp='#force_color_prompt=yes'
+#     line='force_color_prompt=yes'
+# 
+# - name: production basic directory
+#   file: >
+#     path="{{ item }}"
+#     state=directory
+#     mode=0777
+#     group=root
+#     owner=root
+#     force=yes
+#   with_items:
+#   - /srv
+#   - /usr/share/data
+
+# - name: force unuse selinux
+#   shell: setenforce 0 
+#   ignore_errors: true
+# 
+# - name: bash color custom
+#   lineinfile: >
+#     dest='/etc/profile'
+#     line='export PS1="\[\033[1;35m\][\\t][\u@\h \W]\\$\[\033[0m\] "'
